@@ -7,10 +7,12 @@ body{
     justify-content: center;
     height: 100vh;
     background-color: #e0e0e0;
+    
 }
 
 #search-container{
     margin-bottom: 20px;
+    margin-right: 20px;
 }
 
 #search-input{
