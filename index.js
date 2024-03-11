@@ -34,11 +34,13 @@ function search() {
     //console.log(city);
     ulr = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apiKey+"&units=metric";
     fetchData(ulr);
+    ulrHourly = "https://api.openweathermap.org/data/2.5/forecast?q="+city+"&appid="+apiKey+"&units=metric"
+    fetchDataHourly(ulrHourly)
 }
 
 
 
-// fetch data from API
+// fetch data from API current
 
 async function fetchData(ulr){
     
@@ -55,6 +57,23 @@ async function fetchData(ulr){
     }
 }
 
+
+// fetch data from API hourly
+
+async function fetchDataHourly(ulr){
+    
+    try{
+        const response1 = await fetch(ulr,{
+            method:'GET'   
+            });
+        const weatherHourly= await response1.json();
+        console.log(weatherHourly)
+        writeDetailsHourly(weatherHourly);
+    }catch(error){
+        console.log(error);
+        writeDetailsError(error);
+    }
+}
 /*
 function fetchData(ulr){
     fetch(ulr).then((response)=>{
@@ -96,10 +115,10 @@ function writeDetails(a) {
     cityNameTag.textContent = "City: " + a.name
     //write temperature
     const cityTem =document.getElementById("temperature")
-    cityTem.textContent = "Temp Celcius: " + a.main.temp
+    cityTem.textContent = "Temp (°C): " + a.main.temp
     //write humidity
     const cityHue =document.getElementById("humidity")
-    cityHue.textContent = "Humidity: " + a.main.humidity
+    cityHue.textContent = "Humidity (%): " + a.main.humidity
     //write wind
     const cityWind =document.getElementById("wind-speed")
     cityWind.textContent = "Wind (m/s): " + a.wind.speed
@@ -107,8 +126,63 @@ function writeDetails(a) {
     //Icon
     const cityIcon =document.getElementById("weather-icon")
     cityIcon.setAttribute("src","https://openweathermap.org/img/wn/"+a.weather[0].icon+"@2x.png" );
+}
 
 
+
+//write the weather hourly details
+function writeDetailsHourly(a) {
+    const weatherHourlyTag=document.getElementById("A2")
+    
+    while(weatherHourlyTag.lastElementChild){
+        weatherHourlyTag.removeChild(weatherHourlyTag.lastElementChild) 
+    }
+
+    for(let i=1;i<6;i++){
+        const section=document.createElement("div")
+        //write time
+        const cityNameTagh=document.createElement("h2")
+        cityNameTagh.textContent = "next " +3*i +" hours"
+        section.appendChild(cityNameTagh)
+        //tem
+        const cityTemh=document.createElement("p")
+        cityTemh.textContent = "Temp (°C): " + a.list[i].main.temp
+        section.appendChild(cityTemh)
+        //hum
+        const cityHumh=document.createElement("p")
+        cityHumh.textContent = "Humidity (%): " + a.list[i].main.humidity
+        section.appendChild(cityHumh)
+        //wind
+        const cityWindh=document.createElement("p")
+        cityWindh.textContent = "Wind (m/s): " + a.list[i].wind.speed
+        section.appendChild(cityWindh)
+        //img
+        const cityImgh=document.createElement("img")
+        cityImgh.setAttribute("src","https://openweathermap.org/img/wn/"+a.list[i].weather[0].icon+"@2x.png" );
+        section.appendChild(cityImgh)
+        
+        weatherHourlyTag.appendChild(section)
+    }
+
+
+
+
+    //write city name
+    //const cityNameTag =document.getElementById("city-name")
+   // cityNameTag.textContent = "City: " + a.name
+    //write temperature
+   // const cityTem =document.getElementById("temperature")
+   // cityTem.textContent = "Temp Celcius: " + a.main.temp
+    //write humidity
+   // const cityHue =document.getElementById("humidity")
+//cityHue.textContent = "Humidity: " + a.main.humidity
+    //write wind
+   // const cityWind =document.getElementById("wind-speed")
+   // cityWind.textContent = "Wind (m/s): " + a.wind.speed
+
+    //Icon
+   // const cityIcon =document.getElementById("weather-icon")
+   // cityIcon.setAttribute("src","https://openweathermap.org/img/wn/"+a.weather[0].icon+"@2x.png" );
 }
 
 //write the weather error details
@@ -133,3 +207,5 @@ function writeDetailsError(a) {
 
 
 }
+
+
