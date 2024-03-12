@@ -37,6 +37,16 @@ body{
     margin-right: 10px;
 }
 
+/*#cityName{
+    padding: 10px;
+    margin-right: 10px;
+}*/
+
+#units-input{
+    padding: 10px;
+    margin-right: 10px;
+}
+
 #search-button{
     padding: 10px;
 }

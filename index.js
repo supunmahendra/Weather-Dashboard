@@ -13,6 +13,8 @@ const apiKey = "deb41da100a4adf43b939c1e823043cb"
 const btn = document.querySelector("#search-button")
 btn.addEventListener("click",() => {search()})
 
+
+
 //search text
 const cityTag =document.getElementById("search-input")
 cityTag.setAttribute ("list", "cityName")
@@ -30,19 +32,42 @@ fetchCity();
 
 // function start hear
 function search() {
+    //get the city
     city = document.getElementById("search-input").value;
-    //console.log(city);
-    ulr = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apiKey+"&units=metric";
-    fetchData(ulr);
-    ulrHourly = "https://api.openweathermap.org/data/2.5/forecast?q="+city+"&appid="+apiKey+"&units=metric"
-    fetchDataHourly(ulrHourly)
+    //unit select
+    const unit= document.getElementById("units-input").value
+    var tempUnit;
+    tempUnit = temp(unit);
+    var speedUnit;
+    speedUnit= speed(unit);
+    ulr = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apiKey+"&units="+unit;
+    fetchData(ulr,tempUnit,speedUnit);
+    ulrHourly = "https://api.openweathermap.org/data/2.5/forecast?q="+city+"&appid="+apiKey+"&units="+unit;
+    fetchDataHourly(ulrHourly,tempUnit,speedUnit)
 }
 
+
+function temp(unit){
+    if (unit=="metric"){
+       return "(°C)"
+    } if(unit=="imperial"){
+        return "(°F)"
+    }
+}
+
+
+function speed(unit){
+    if (unit=="metric"){
+       return "(m/s)"
+    } if(unit=="imperial"){
+        return "(mph)"
+    }
+}
 
 
 // fetch data from API current
 
-async function fetchData(ulr){
+async function fetchData(ulr,a,b){
     
     try{
         const response = await fetch(ulr,{
@@ -50,7 +75,7 @@ async function fetchData(ulr){
             });
         const weather= await response.json();
         //console.log(weather)
-        writeDetails(weather);
+        writeDetails(weather,a,b);
     }catch(error){
         console.log(error);
         writeDetailsError(error);
@@ -60,15 +85,14 @@ async function fetchData(ulr){
 
 // fetch data from API hourly
 
-async function fetchDataHourly(ulr){
+async function fetchDataHourly(ulr,a,b){
     
     try{
         const response1 = await fetch(ulr,{
             method:'GET'   
             });
         const weatherHourly= await response1.json();
-        console.log(weatherHourly)
-        writeDetailsHourly(weatherHourly);
+        writeDetailsHourly(weatherHourly,a,b);
     }catch(error){
         console.log(error);
         writeDetailsError(error);
@@ -109,19 +133,19 @@ function fetchCity(){
 
 
 //write the weather details
-function writeDetails(a) {
+function writeDetails(a,temp,speed) {
     //write city name
     const cityNameTag =document.getElementById("city-name")
     cityNameTag.textContent = "City: " + a.name
     //write temperature
     const cityTem =document.getElementById("temperature")
-    cityTem.textContent = "Temp (°C): " + a.main.temp
+    cityTem.textContent = "Temp "+temp+" : "  + a.main.temp
     //write humidity
     const cityHue =document.getElementById("humidity")
-    cityHue.textContent = "Humidity (%): " + a.main.humidity
+    cityHue.textContent = "Humidity (%) : " + a.main.humidity
     //write wind
     const cityWind =document.getElementById("wind-speed")
-    cityWind.textContent = "Wind (m/s): " + a.wind.speed
+    cityWind.textContent = "Wind "+speed+" : " + a.wind.speed
 
     //Icon
     const cityIcon =document.getElementById("weather-icon")
@@ -131,7 +155,7 @@ function writeDetails(a) {
 
 
 //write the weather hourly details
-function writeDetailsHourly(a) {
+function writeDetailsHourly(a,temp,speed) {
     const weatherHourlyTag=document.getElementById("A2")
     
     while(weatherHourlyTag.lastElementChild){
@@ -146,15 +170,15 @@ function writeDetailsHourly(a) {
         section.appendChild(cityNameTagh)
         //tem
         const cityTemh=document.createElement("p")
-        cityTemh.textContent = "Temp (°C): " + a.list[i].main.temp
+        cityTemh.textContent = "Temp "+temp+" : "+ a.list[i].main.temp
         section.appendChild(cityTemh)
         //hum
         const cityHumh=document.createElement("p")
-        cityHumh.textContent = "Humidity (%): " + a.list[i].main.humidity
+        cityHumh.textContent = "Humidity (%) : " + a.list[i].main.humidity
         section.appendChild(cityHumh)
         //wind
         const cityWindh=document.createElement("p")
-        cityWindh.textContent = "Wind (m/s): " + a.list[i].wind.speed
+        cityWindh.textContent = "Wind "+speed+" : " + a.list[i].wind.speed
         section.appendChild(cityWindh)
         //img
         const cityImgh=document.createElement("img")
